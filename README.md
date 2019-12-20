@@ -5,8 +5,8 @@
 ```
 $ tree -d
 .
-└── yki
-    └── docs // ドキュメントはこちら
+├── docs // ドキュメントはこちらに
+└── terraform // インフラ構築はこちらに
 
 2 directories
 ```
