@@ -6,21 +6,12 @@ from firebase_admin import firestore
 COLLECTION_NAME = "Motion"
 CREDENTIAL_PATH = "ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json"
 
+cred = credentials.Certificate(CREDENTIAL_PATH)
+firebase_admin.initialize_app(cred)
+
 def get_motion_status():
-    initialize_firestore(CREDENTIAL_PATH)
     docs = get_firestore(COLLECTION_NAME)
-    for doc in docs:
-        doc_dict = doc.to_dict()
-        return "{} document is {}".format(doc.id, doc_dict.get("motion"))
-
-
-def get_request_params(request):
-    # TODO いらない？？？
-    pass
-
-def initialize_firestore(credential_path):
-    cred = credentials.Certificate(credential_path) #TODO ダウンロードした秘密鍵
-    firebase_admin.initialize_app(cred) 
+    return get_message(docs)
 
 def get_firestore(collection):
     db = firestore.client()
