@@ -7,7 +7,8 @@ from firebase_admin import firestore
 
 COLLECTION_NAME = "Motion"
 CREDENTIAL_PATH = "ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json"
-
+cred = credentials.Certificate(CREDENTIAL_PATH)
+firebase_admin.initialize_app(cred)
 def get_motion_status():
     docs = get_firestore(COLLECTION_NAME)
     return get_message(docs)
