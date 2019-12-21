@@ -2,6 +2,7 @@ package api
 
 import "github.com/gin-gonic/gin"
 import "net/http"
+import "strings"
 
 import "yki/src/gateways/controllers"
 import "yki/src/gateways/repositories"
@@ -33,7 +34,12 @@ func postMotions(c *gin.Context) {
 	mrepo := repositories.NewFirestoreMotionRepository("ca-camp-rabbit-team-2019-12")
 	mc := controllers.NewMotionController(mrepo)
 	req := load(c)
-	m := mc.ConverToMotion(req.Message.Data.motion.(bool))
+	str := string(req.Message.Data)
+	st := false
+	if strings.Index(str, "true") != -1 {
+		st = true
+	}
+	m := mc.ConverToMotion(st)
 	mc.Update(m)
 	c.JSON(http.StatusOK, mc.MotionToHTTPResponse(mc.Get()))
 }
