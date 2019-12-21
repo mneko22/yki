@@ -1,10 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
-  dir: 'application/get'
+  dir: 'applications/get'
   args: ['kms', 'decrypt', '--location', 'global', '--keyring', 'motion-status', '--key', 'motion-status','--ciphertext-file', 'ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json.enc', '--plaintext-file', 'ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json']
   id: 'decode'
 - name: 'gcr.io/cloud-builders/docker'
-  dir: 'application/get'
+  dir: 'applications/get'
   args: ['build', '--tag', 'gcr.io/$PROJECT_ID/motion-status:v1', '.']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['push', 'gcr.io/$PROJECT_ID/motion-status:v1']

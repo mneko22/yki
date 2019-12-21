@@ -31,7 +31,7 @@ app = Flask(__name__)
 
 @app.route("/knock", methods=['GET'])
 def request_motion_status():
-    return get_motion_status()
+    return get_motion_status(), 200
 
 
 # for test 
