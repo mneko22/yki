@@ -5,8 +5,8 @@ steps:
   id: 'decode'
 - name: 'gcr.io/cloud-builders/docker'
   dir: 'applications/update'
-  args: ['build', '--tag', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME', '.']
+  args: ['build', '--tag', 'gcr.io/$PROJECT_ID/motion-status-update:$SHORT_SHA', '.']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME']
+  args: ['push', 'gcr.io/$PROJECT_ID/motion-status-update:$SHORT_SHA']
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'motion-status-update', '--image', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME', '--platform', 'managed', '--region', 'us-central1', '--memory', '128Mi']
+  args: ['beta', 'run', 'deploy', 'motion-status-update', '--image', 'gcr.io/$PROJECT_ID/motion-status-update:$SHORT_SHA', '--platform', 'managed', '--region', 'us-central1', '--memory', '128Mi']
