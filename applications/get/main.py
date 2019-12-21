@@ -7,19 +7,6 @@ from firebase_admin import firestore
 
 COLLECTION_NAME = "Motion"
 CREDENTIAL_PATH = "ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json"
-# SLACK_SIGNING_SECRET = os.environ['SLACK_SIGNING_SECRET']
-# SLACK_OAUTH_ACCESS_TOKEN = os.environ['SLACK_OAUTH_ACCESS_TOKEN']
-# SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
-
-cred = credentials.Certificate(CREDENTIAL_PATH)
-firebase_admin.initialize_app(cred)
-
-def verify_slack():
-    data = request.data.decode('utf-8')
-    data = json.loads(data)
-    if 'challenge' in data:
-        token = str(data['challenge'])
-        return Response(token, mimetype='text/plane')
 
 def get_motion_status():
     docs = get_firestore(COLLECTION_NAME)
@@ -45,32 +32,39 @@ def get_message(docs):
         doc_dict = doc.to_dict()
         motion = doc_dict.get("motion")
         if motion:
-            ret_str += "{} is occupied.<br>".format(doc_id)
+            ret_str += "{} is occupied.\n".format(doc_id)
         else:
-            ret_str += "{} is not occupied.<br>".format(doc_id)
+            ret_str += "{} is not occupied.\n".format(doc_id)
     return ret_str
-
-def response_to_slack(state_message):
-    param = {
-        'token': SLACK_OAUTH_ACCESS_TOKEN,
-        'channels': SLACK_CHANNEL,
-        'filename': 'cat.png',
-        'title': 'cat'
-    }
-
-    requests.post(url=SLACK_UPLOAD_URL, params=param, files=files)
 
 app = Flask(__name__)
 
 @app.route("/knock", methods=['POST'])
 def request_motion_status():
-    data = request.data.decode('utf-8')
-    data = json.loads(data)
-    if 'challenge' in data:
-        challenge = str(data['challenge'])
-        ret_message = get_motion_status()
-        return jsonify({"challenge": challenge, "message": ret_message}), 200
+    if request.headers['Content-Type'] != 'application/json':
+        app.logger.debug(request.headers['Content-Type'])
+        return jsonify(res='error'), 400
 
+    # event apiの認証部分
+    if request.json['type'] == 'url_verification':
+        return jsonify({
+            'status': 'OK',
+            'data': request.json['challenge']
+        }), 200
+
+    if request.json['event']['type'] == 'message':
+        text = request.json['event']['text']
+        if text == "こんこん":
+            ret_message = get_motion_status()
+            return jsonify({
+                'status': 'OK',
+                'data': ret_message
+            }), 200
+        else:
+            return jsonify({
+                'status': 'OK',
+                'data': "こんこんって聞いてね"
+            }), 200
 
 
 
