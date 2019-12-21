@@ -23,13 +23,15 @@ func Liten() {
 }
 
 func postMotions(c *gin.Context) {
-	immr := repositories.NewInMemoryMotionRepository()
-	mc := controllers.NewMotionController(immr)
+	// TODO:: FactoryMethodで生成リポジトリを変更する
+	// mrepo := repositories.NewInMemoryMotionRepository()
+	// TODO:: 環境変数からPROJECT_IDを取得する
+	mrepo := repositories.NewFirestoreMotionRepository("ca-camp-rabbit-team-2019-12")
+	mc := controllers.NewMotionController(mrepo)
 	req := load(c)
 	m := mc.ConverToMotion(req.Motion)
-	// m := mc.ConverToMotion(true)
 	mc.Update(m)
-	c.JSON(http.StatusOK, mc.Get())
+	c.JSON(http.StatusOK, mc.MotionToHTTPResponse(mc.Get()))
 }
 
 func load(c *gin.Context) Request{

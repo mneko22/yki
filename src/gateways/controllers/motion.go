@@ -8,6 +8,10 @@ type MotionController struct {
 	MotionRepository repositories.Motioner
 }
 
+type HTTPResponse struct {
+	Motion bool `json:"motion"`
+}
+
 func NewMotionController(mr repositories.Motioner) *MotionController {
 	return &MotionController{mr}
 }
@@ -23,4 +27,8 @@ func (mc *MotionController) Update(m entities.Motion) (entities.Motion, error) {
 
 func (mc *MotionController) ConverToMotion(status bool) entities.Motion {
 	return entities.Motion{status}
+}
+
+func (mc *MotionController) MotionToHTTPResponse(m entities.Motion) HTTPResponse {
+	return HTTPResponse{m.Status}
 }

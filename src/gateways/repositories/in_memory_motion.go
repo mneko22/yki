@@ -3,20 +3,19 @@ package repositories
 import "yki/src/entities"
 
 type InMemoryMotionRepository struct {
+	motion entities.Motion
 }
 
-var motion entities.Motion
-
 func NewInMemoryMotionRepository() InMemoryMotionRepository {
-	motion = entities.Motion{false}
-	return InMemoryMotionRepository{}
+	motion := entities.Motion{false}
+	return InMemoryMotionRepository{motion}
 }
 
 func (immr InMemoryMotionRepository) Update(me entities.Motion) (entities.Motion, error)  {
-	motion = me
-	return motion, nil
+	immr.motion = me
+	return immr.motion, nil
 }
 
 func (immr InMemoryMotionRepository) Get() entities.Motion {
-	return motion
+	return immr.motion
 }
