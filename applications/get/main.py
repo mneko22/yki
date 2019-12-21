@@ -16,7 +16,7 @@ def get_motion_status():
 
 def get_firestore(collection):
     db = firestore.client()
-    docs = db.collection(collection).get()
+    docs = db.collection(collection).stream()
     return docs
 
 def get_message(docs):
