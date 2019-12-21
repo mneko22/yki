@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  dir: 'applications/update'
+  args: ['kms', 'decrypt', '--location', 'global', '--keyring', 'motion-status', '--key', 'motion-status','--ciphertext-file', 'ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json.enc', '--plaintext-file', 'ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json']
+  id: 'decode'
+- name: 'gcr.io/cloud-builders/docker'
+  dir: 'applications/update'
+  args: ['build', '--tag', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'motion-status-update', '--image', 'gcr.io/$PROJECT_ID/motion-status-update:$TAG_NAME', '--platform', 'managed', '--region', 'us-central1', '--memory', '128Mi']
