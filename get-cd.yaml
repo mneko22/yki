@@ -6,7 +6,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   dir: 'applications/get'
   args: ['build', '--tag', 'gcr.io/$PROJECT_ID/motion-status:v1', '.']
-- name: 'gcr.io/cloud-builders/gcloud'
+- name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/motion-status:v1']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'run', 'deploy', 'motion-status', '--image', 'gcr.io/$PROJECT_ID/motion-status:v1']
