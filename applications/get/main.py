@@ -42,6 +42,8 @@ app = Flask(__name__)
 
 @app.route("/knock", methods=['POST'])
 def request_motion_status():
+    print(request)
+    print(request.json)
     if request.headers['Content-Type'] != 'application/json':
         app.logger.debug(request.headers['Content-Type'])
         return jsonify(res='error'), 400
