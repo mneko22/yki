@@ -18,6 +18,26 @@ def get_firestore(collection):
     docs = db.collection(collection).get()
     return docs
 
+def get_message(docs):
+    """Firestoreの結果からメッセージを生成
+    
+    Arguments:
+        docs {operator} -- Firestoreからのget結果
+    
+    Returns:
+        str -- メッセージ内容
+    """
+    ret_str = ""
+    for doc in docs:
+        doc_id = doc.id
+        doc_dict = doc.to_dict()
+        motion = doc_dict.get("motion")
+        if motion:
+            ret_str += "{} is occupied.<br>".format(doc_id)
+        else:
+            ret_str += "{} is not occupied.<br>".format(doc_id)
+    return ret_str
+
 app = Flask(__name__)
 
 @app.route("/knock", methods=['GET'])
