@@ -59,12 +59,12 @@ def request_motion_status():
             ret_message = get_motion_status()
             return jsonify({
                 'status': 'OK',
-                'data': ret_message
+                'text': ret_message
             }), 200
         else:
             return jsonify({
                 'status': 'OK',
-                'data': "こんこんって聞いてね"
+                'text': "こんこんって聞いてね"
             }), 200
 
 
