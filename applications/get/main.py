@@ -66,13 +66,10 @@ app = Flask(__name__)
 def request_motion_status():
     data = request.data.decode('utf-8')
     data = json.loads(data)
-    try:
-        if 'challenge' in data:
-            challenge = str(data['challenge'])
-            return Response(response=json.dumps({'challenge': challenge}), status=200)
-    finally:
+    if 'challenge' in data:
+        challenge = str(data['challenge'])
         ret_message = get_motion_status()
-        print(ret_message)
+        return jsonify({"challenge": challenge, "message": ret_message}), 200
 
 
 
