@@ -1,13 +1,25 @@
-from flask import Flask, request
+import json
+import os
+from flask import Flask, request, Response, jsonify
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
 COLLECTION_NAME = "Motion"
 CREDENTIAL_PATH = "ca-camp-rabbit-team-2019-12-firebase-adminsdk-pack4-ff94ef4b4f.json"
+# SLACK_SIGNING_SECRET = os.environ['SLACK_SIGNING_SECRET']
+# SLACK_OAUTH_ACCESS_TOKEN = os.environ['SLACK_OAUTH_ACCESS_TOKEN']
+# SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
 
 cred = credentials.Certificate(CREDENTIAL_PATH)
 firebase_admin.initialize_app(cred)
+
+def verify_slack():
+    data = request.data.decode('utf-8')
+    data = json.loads(data)
+    if 'challenge' in data:
+        token = str(data['challenge'])
+        return Response(token, mimetype='text/plane')
 
 def get_motion_status():
     docs = get_firestore(COLLECTION_NAME)
@@ -38,11 +50,31 @@ def get_message(docs):
             ret_str += "{} is not occupied.<br>".format(doc_id)
     return ret_str
 
+def response_to_slack(state_message):
+    param = {
+        'token': SLACK_OAUTH_ACCESS_TOKEN,
+        'channels': SLACK_CHANNEL,
+        'filename': 'cat.png',
+        'title': 'cat'
+    }
+
+    requests.post(url=SLACK_UPLOAD_URL, params=param, files=files)
+
 app = Flask(__name__)
 
-@app.route("/knock", methods=['GET'])
+@app.route("/knock", methods=['POST'])
 def request_motion_status():
-    return get_motion_status(), 200
+    data = request.data.decode('utf-8')
+    data = json.loads(data)
+    try:
+        if 'challenge' in data:
+            challenge = str(data['challenge'])
+            return Response(response=json.dumps({'challenge': challenge}), status=200)
+    finally:
+        ret_message = get_motion_status()
+        print(ret_message)
+
+
 
 
 # for test 
