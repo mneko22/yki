@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 from flask import Flask, request, Response, jsonify
 import firebase_admin
 from firebase_admin import credentials
@@ -40,10 +41,13 @@ def get_message(docs):
 
 app = Flask(__name__)
 
-@app.route("/knock", methods=['POST'])
+@app.route("/knock", methods=['POST', 'GET'])
 def request_motion_status():
-    print(request)
-    print(request.json)
+    logging.info(request)
+    logging.info(request.json)
+    if 'X-Slack-Signature' in request.headers:
+        return get_motion_status()
+
     if request.headers['Content-Type'] != 'application/json':
         app.logger.debug(request.headers['Content-Type'])
         return jsonify(res='error'), 400
